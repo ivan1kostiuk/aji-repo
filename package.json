@@ -1,0 +1,21 @@
+{
+  "name": "aji-repo",
+  "version": "1.0.0",
+  "description": "Quiz-spel där man kan gissa vilken flagga hör till vilket land, vilket land som har vilken form, vilket land som har större befolkning utav två val, etc. Använder publika API's för information om länderna.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivan1kostiuk/aji-repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ivan1kostiuk/aji-repo/issues"
+  },
+  "homepage": "https://github.com/ivan1kostiuk/aji-repo#readme"
+}
