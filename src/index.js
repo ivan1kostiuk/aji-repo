@@ -41,6 +41,8 @@ async function startGame(mode) {
 
 function loadQuestion() {
 
+    nextBtn.disabled = true;
+
     if (!quiz.hasMoreQuestions()) {
 
         document.getElementById("question")
@@ -65,6 +67,8 @@ function handleAnswer(index) {
         quiz.checkAnswer(index);
 
     showResult(correct);
+
+    nextBtn.disabled = false;
 }
 
 document
@@ -74,4 +78,5 @@ document
         quiz.nextQuestion();
 
         loadQuestion();
+
     };

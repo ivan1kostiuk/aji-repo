@@ -17,7 +17,15 @@ export function showQuestion(question, onAnswer) {
 
         button.innerText = option;
 
-        button.onclick = () => onAnswer(index);
+        button.onclick = () => {
+
+            // lock ONLY quiz buttons
+            answersElement
+                .querySelectorAll("button")
+                .forEach(btn => btn.disabled = true);
+
+            onAnswer(index);
+        };
 
         answersElement.appendChild(button);
     });
