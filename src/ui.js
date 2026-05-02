@@ -19,12 +19,20 @@ export function showQuestion(question, onAnswer) {
 
         button.onclick = () => {
 
-            // lock ONLY quiz buttons
             answersElement
                 .querySelectorAll("button")
                 .forEach(btn => btn.disabled = true);
 
+            const isCorrect =
+                index === question.answer;
+
+            button.style.backgroundColor =
+                isCorrect ? "lightgreen" : "red";
+
+
+
             onAnswer(index);
+            
         };
 
         answersElement.appendChild(button);
