@@ -1,7 +1,7 @@
+// Represents a quiz session (state + logic)
 export class Quiz {
 
     constructor(questions) {
-
         this.questions = questions;
         this.currentQuestion = 0;
         this.score = 0;
@@ -11,8 +11,8 @@ export class Quiz {
         return this.questions[this.currentQuestion];
     }
 
+    // Checks if the given answer index is correct
     checkAnswer(index) {
-
         const correct =
             index === this.getCurrentQuestion().answer;
 

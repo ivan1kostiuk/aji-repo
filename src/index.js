@@ -1,10 +1,13 @@
+// Import quiz logic (state + rules)
 import { Quiz } from "./quiz.js";
 
+// Import UI functions
 import {
     showQuestion,
     showResult
 } from "./ui.js";
 
+// Import API function (fetches questions)
 import {
     loadQuestions
 } from "./api.js";
@@ -17,6 +20,7 @@ const menu =
 const quizScreen =
     document.getElementById("quiz");
 
+// Attach click handlers to difficulty buttons
 document
     .getElementById("easyBtn")
     .onclick = () => startGame("easy");
@@ -25,12 +29,15 @@ document
     .getElementById("hardBtn")
     .onclick = () => startGame("hard");
 
+// Starts a new game
+// mode = "easy" or "hard"
 async function startGame(mode) {
 
+    // Hide menu, show quiz screen
     menu.style.display = "none";
-
     quizScreen.style.display = "block";
 
+    // Fetch questions from API
     const questions =
         await loadQuestions(mode);
 
@@ -39,10 +46,12 @@ async function startGame(mode) {
     loadQuestion();
 }
 
+// Loads and displays the current question
 function loadQuestion() {
-
+    // Disable "Next" button until user answers
     nextBtn.disabled = true;
 
+    // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
 
         document.getElementById("question")
@@ -61,6 +70,7 @@ function loadQuestion() {
     );
 }
 
+// Called when user selects an answer
 function handleAnswer(index) {
 
     const correct =
@@ -68,15 +78,14 @@ function handleAnswer(index) {
 
     showResult(correct);
 
+    // Enable "Next" button after answering
     nextBtn.disabled = false;
 }
 
+// Proceed to next question when clicked "Next"
 document
     .getElementById("nextBtn")
     .onclick = () => {
-
         quiz.nextQuestion();
-
         loadQuestion();
-
     };
