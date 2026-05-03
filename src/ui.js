@@ -44,6 +44,7 @@ export function showQuestion(question, onAnswer) {
     });
 }
 
+// Displays whether the last answer was correct or not
 export function showResult(correct) {
 
     const result =
