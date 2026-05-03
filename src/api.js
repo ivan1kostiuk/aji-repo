@@ -2,7 +2,7 @@ export async function loadQuestions() {
 
     return [
         {
-            question: "Whats the capital of Sweden",
+            question: "Whats the capital of Sweden?",
             options: ["Stockholm", "Oslo", "Gothenburg", "Malmö"],
             answer: 0
         },
