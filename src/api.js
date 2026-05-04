@@ -1,18 +1,12 @@
 export async function loadQuestions() {
 
-    return [
-        {
-            question: "Whats the capital of Sweden?",
-            options: ["Stockholm", "Oslo", "Gothenburg", "Malmö"],
-            answer: 0
-        },
+    const url = 
+        "https://restcountries.com/v3.1/all?fields=name,capital,flag,population"
 
-        {
-            question: "What color is the sky?",
-            options: ["Green", "Blue", "Red", "Yellow"],
-            answer: 1
-        }
-    ];
+    const response = await fetch(url)
+    const data = await response.json()
+
+    return data;
 
     /* Good api:s:
     https://restcountries.com/
