@@ -3,10 +3,23 @@ export async function loadQuestions() {
     const url = 
         "https://restcountries.com/v3.1/all?fields=name,capital,flag,population"
 
-    const response = await fetch(url)
-    const data = await response.json()
+    try{
+        const response = await fetch(url)
+        if (!response.ok){
+            throw new Error(`HTTP error: ${response.status}`);
+        }
 
-    return data;
+        const data = await response.json()
+        if (!data || data.length === 0){
+            throw new Error("No data found");
+        }
+
+        return data;    
+
+    } catch (error){
+        console.error("Failed to fetch:", error);
+        throw error;
+    }
 
     /* Good api:s:
     https://restcountries.com/
