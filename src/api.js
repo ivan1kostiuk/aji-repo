@@ -75,14 +75,6 @@ function generateQuestions(countries, numberOfQuestions){
     return questions;
 }
 
-// Helper function for generating random int 
-// between min (inclusive) and max (exclusive)
-function getRandomInt(min, max){
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
-}
-
 // Helper function for shuffling an array
 // Deep copy using Fisher-Yates shuffle algorithm
 function shuffle(array){
