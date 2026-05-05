@@ -53,17 +53,22 @@ function generateQuestions(countries, numberOfQuestions){
             currentCountry => currentCountry !== country
         );
         const wrongOptions = shuffle(remainingCountries);
-        
+
+        const correctCapital = country.capital[0];
+
+        // Randomize options
+        const options = shuffle([
+            country.capital[0], 
+            wrongOptions[0].capital[0],
+            wrongOptions[1].capital[0],
+            wrongOptions[2].capital[0]
+        ])
+
         // Fill in questions
         questions.push({
             question: `What's the capital of ${country.name.common}?`,
-            options: [
-                country.capital[0], 
-                wrongOptions[0].capital[0],
-                wrongOptions[1].capital[0],
-                wrongOptions[2].capital[0],
-            ],
-            answer: 0
+            options: options,
+            answer: options.indexOf(correctCapital)
         });
     }
 
