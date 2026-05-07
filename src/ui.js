@@ -66,5 +66,5 @@ export function showResult(correct) {
         document.getElementById("result");
 
     result.innerText =
-        correct ? "✅ Correct!" : "❌ Wrong!";
+        correct ? "✅ Correct!" : "❌ Incorrect!";
 }

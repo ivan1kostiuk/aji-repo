@@ -36,6 +36,8 @@ document
 // Starts a new game
 // mode = "easy" or "hard"
 async function startGame(mode) {
+    document.getElementById("score").innerText = "Score: 0";
+
 
     // Hide menu, show quiz screen
     menu.style.display = "none";
@@ -82,6 +84,9 @@ function handleAnswer(index) {
         quiz.checkAnswer(index);
 
     showResult(correct);
+    
+    document.getElementById("score").innerText = `Score: ${quiz.score}`
+
 
     // Enable "Next" button after answering
     nextBtn.disabled = false;
