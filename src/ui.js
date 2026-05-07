@@ -1,6 +1,10 @@
 // Displays a question and its answer options in the UI
 // onAnswer is a callback function that handles answer
 export function showQuestion(question, onAnswer) {
+
+
+    // Removes prevoius answer feedback
+    result.innerText = "";
     // Get HTML elements from the page by their IDs
     const questionElement =
         document.getElementById("question");
@@ -29,14 +33,24 @@ export function showQuestion(question, onAnswer) {
                 .querySelectorAll("button")
                 .forEach(btn => btn.disabled = true);
 
+                answersElement
+                .querySelectorAll("button")
+                .forEach((btn, i) => {
+                    if (i === question.answer) {
+                        btn.style.backgroundColor = "lightgreen";
+                    }
+                });
+
             const isCorrect =
                 index === question.answer;
 
             button.style.backgroundColor =
                 isCorrect ? "lightgreen" : "red";
 
+
             // Call handleAnswer function
             onAnswer(index);
+
         };
 
         // Add the button to the answers container in the HTML
