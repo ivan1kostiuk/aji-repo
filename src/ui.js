@@ -2,7 +2,6 @@
 // onAnswer is a callback function that handles answer
 export function showQuestion(question, onAnswer) {
 
-
     // Removes prevoius answer feedback
     result.innerText = "";
     // Get HTML elements from the page by their IDs
@@ -17,7 +16,6 @@ export function showQuestion(question, onAnswer) {
 
     // Clear previous answer buttons
     answersElement.innerHTML = "";
-
     question.options.forEach((option, index) => {
         // Create a new button element for each option
         const button =
@@ -33,17 +31,20 @@ export function showQuestion(question, onAnswer) {
                 .querySelectorAll("button")
                 .forEach(btn => btn.disabled = true);
 
-                answersElement
-                .querySelectorAll("button")
-                .forEach((btn, i) => {
-                    if (i === question.answer) {
-                        btn.style.backgroundColor = "lightgreen";
-                    }
-                });
 
             const isCorrect =
                 index === question.answer;
 
+            // Shows what answer was correct
+            answersElement
+            .querySelectorAll("button")
+            .forEach((btn, i) => {
+                if (i === question.answer) {
+                    btn.style.backgroundColor = "lightgreen";
+                }
+            });
+            
+            
             button.style.backgroundColor =
                 isCorrect ? "lightgreen" : "red";
 

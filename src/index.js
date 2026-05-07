@@ -22,12 +22,16 @@ const quizScreen =
 
 // Attach click handlers to difficulty buttons
 document
-    .getElementById("easyBtn")
-    .onclick = () => startGame("easy");
+    .getElementById("mode1")
+    .onclick = () => startGame("guess_the_capital");
 
 document
-    .getElementById("hardBtn")
-    .onclick = () => startGame("hard");
+    .getElementById("mode2")
+    .onclick = () => startGame("mode2");
+
+document
+.getElementById("mode3")
+.onclick = () => startGame("mode3");
 
 // Starts a new game
 // mode = "easy" or "hard"
@@ -50,6 +54,7 @@ async function startGame(mode) {
 function loadQuestion() {
     // Disable "Next" button until user answers
     nextBtn.disabled = true;
+    document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion}`;
 
     // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
@@ -82,6 +87,13 @@ function handleAnswer(index) {
     nextBtn.disabled = false;
 }
 
+
+function goToMenu() {
+
+    menu.style.display = "block";
+    quizScreen.style.display = "none";
+}
+
 // Proceed to next question when clicked "Next"
 document
     .getElementById("nextBtn")
@@ -89,3 +101,8 @@ document
         quiz.nextQuestion();
         loadQuestion();
     };
+
+document
+    .getElementById("menuBtn")
+    .onclick = 
+        goToMenu;
