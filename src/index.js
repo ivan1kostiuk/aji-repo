@@ -34,20 +34,30 @@ document
 .onclick = () => startGame("mode3");
 
 // Starts a new game
-// mode = "easy" or "hard"
+
 async function startGame(mode) {
-    document.getElementById("score").innerText = "Score: 0";
 
 
-    // Hide menu, show quiz screen
-    menu.style.display = "none";
-    quizScreen.style.display = "block";
+    const questions = await loadQuestions(mode);
 
-    // Fetch questions from API
-    const questions =
-        await loadQuestions(mode);
 
     quiz = new Quiz(questions);
+
+
+    document.getElementById("score").innerText = "Score: 0";
+    document.getElementById("result").innerText = "";
+    document.getElementById("playAgainBtn").hidden = true;
+
+
+    document.getElementById("answers").innerHTML = "";
+
+
+    document.getElementById("nextBtn").disabled = true;
+
+    quizScreen.style.display = "block";
+
+    menu.style.display = "none";
+
 
     loadQuestion();
 }
@@ -58,16 +68,23 @@ function loadQuestion() {
     nextBtn.disabled = true;
     document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion +1}`;
 
-    // If no more questions → show final score
+    // Show final result screen with option to play again
     if (!quiz.hasMoreQuestions()) {
+
+    document.getElementById("result")
+        .innerText = "";
+
+    document.getElementById("answers")
+        .innerHTML = "";
+        document.getElementById("nextBtn").replaceWith(document.getElementById("playAgainBtn"));
+        document.getElementById("playAgainBtn").hidden = false;
+
 
         document.getElementById("question")
             .innerText =
-            `Finished! Score: ${quiz.score}/${quiz.questions.length}`;
+            `Finished! \nScore: ${quiz.score}/${quiz.questions.length}`;
 
-        document.getElementById("answers")
-            .innerHTML = "";
-
+ 
         return;
     }
 
@@ -94,9 +111,14 @@ function handleAnswer(index) {
 
 
 function goToMenu() {
+    location.reload();
+}
 
-    menu.style.display = "block";
-    quizScreen.style.display = "none";
+// Unimplemented function to play again (not working)
+function playAgain() {
+
+    startGame("guess_the_country");
+
 }
 
 // Proceed to next question when clicked "Next"
@@ -109,5 +131,11 @@ document
 
 document
     .getElementById("menuBtn")
+    .onclick = 
+        goToMenu;
+
+// Play again button hard resets the game, cound be improved
+document
+    .getElementById("playAgainBtn")
     .onclick = 
         goToMenu;
