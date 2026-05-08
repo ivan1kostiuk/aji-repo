@@ -1,7 +1,7 @@
-export async function loadQuestions() {
+export async function loadQuestions(gameMode) {
     const data = await fetchData();
 
-    const questions = generateQuestions(data, 10);
+    const questions = generateQuestions(data, 10, gameMode);
 
     return questions;
 }
@@ -11,7 +11,7 @@ async function fetchData() {
     const url = 
         "https://restcountries.com/v3.1/all?fields=name,capital,flag,population"
 
-    try{
+    try {
         const response = await fetch(url)
         if (!response.ok){
             throw new Error(`HTTP error: ${response.status}`);
@@ -30,13 +30,34 @@ async function fetchData() {
     }
 }
 
+const gameModes = {
+    capital : {
+        // Filter out countries without capitals
+        validate: country => country.capital && country.capital.length > 0,
+        getQuestion: country => ({ text: `What's the capital of ${country.name.common}?` }),
+        getCorrectAnswer: country => country.capital[0],
+        getWrongAnswer: country => country.capital?.[0]
+    },
+
+    flag : {
+        validate: country => country.flag,
+        getQuestion: country => ({
+            text: 'Which country does this flag belong to?',
+            flag: country.flag
+        }),
+        getCorrectAnswer: country => country.name.common,
+        getWrongAnswer: country => country.name.common
+    }
+}
+
 // Converts data into questions
 // Currently only contains questions about countries' capitals
-function generateQuestions(countries, numberOfQuestions){
-    // Filter out countries without capitals
-    const validCountries = countries.filter(
-        country => country.capital && country.capital.length > 0
-    );
+function generateQuestions(countries, numberOfQuestions, gameMode){
+    
+    const mode = gameModes[gameMode];
+    
+    //Filter out invalid countries depending on game mode
+    const validCountries = countries.filter(mode.validate);
 
     const shuffledCountries = shuffle(validCountries);
     const questions = [];
@@ -48,27 +69,32 @@ function generateQuestions(countries, numberOfQuestions){
     for (let i = 0; i < questionCount; i++){
         const country = shuffledCountries[i];
 
-        // Generate wrong options
-        const remainingCountries = shuffledCountries.filter(
-            currentCountry => currentCountry !== country
-        );
-        const wrongOptions = shuffle(remainingCountries);
+        const correctAnswer = mode.getCorrectAnswer(country);
+        
+        // Handle countries with several capitals.
+        //if (gameMode === 'capital') {
+        //    const correctAnswer = country.capital[0];
+        //}
 
-        const correctCapital = country.capital[0];
+        // Generate wrong options by shuffling remaining valid countries
+        const wrongOptions = shuffle(
+            validCountries
+                .filter(currentCountry => currentCountry !== country)
+                .map(mode.getWrongAnswer)
+                .filter(Boolean)
+        ).slice(0, 3); // Take first 3 wrong options
 
         // Randomize options
         const options = shuffle([
-            country.capital[0], 
-            wrongOptions[0].capital[0],
-            wrongOptions[1].capital[0],
-            wrongOptions[2].capital[0]
+            correctAnswer,
+            ...wrongOptions
         ])
 
         // Fill in questions
         questions.push({
-            question: `What's the capital of ${country.name.common}?`,
+            question: mode.getQuestion(country),
             options: options,
-            answer: options.indexOf(correctCapital)
+            answer: options.indexOf(correctAnswer)
         });
     }
 
