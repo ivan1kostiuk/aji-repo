@@ -56,7 +56,7 @@ async function startGame(mode) {
 function loadQuestion() {
     // Disable "Next" button until user answers
     nextBtn.disabled = true;
-    document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion}`;
+    document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion +1}`;
 
     // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
