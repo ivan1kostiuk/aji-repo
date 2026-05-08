@@ -13,6 +13,7 @@ import {
 } from "./api.js";
 
 let quiz;
+let currentMode = null;
 
 const menu =
     document.getElementById("menu");
@@ -20,44 +21,41 @@ const menu =
 const quizScreen =
     document.getElementById("quiz");
 
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const playAgainBtn =
+    document.getElementById("playAgainBtn");
+
 // Attach click handlers to difficulty buttons
 document
     .getElementById("mode1")
-    .onclick = () => startGame("guess_the_capital");
+    .onclick = () => startGame("capital");
 
 document
     .getElementById("mode2")
-    .onclick = () => startGame("mode2");
+    .onclick = () => startGame("flag");
 
 document
 .getElementById("mode3")
 .onclick = () => startGame("mode3");
 
 // Starts a new game
-
+// mode = "easy" or "hard"
 async function startGame(mode) {
+    currentMode = mode;
+    document.getElementById("score").innerText = "Score: 0";
 
+    // Hide menu, show quiz screen
+    menu.style.display = "none";
+    quizScreen.style.display = "block";
+    playAgainBtn.style.display = "none";
 
-    const questions = await loadQuestions(mode);
-
+    // Fetch questions from API
+    const questions =
+        await loadQuestions(mode);
 
     quiz = new Quiz(questions);
-
-
-    document.getElementById("score").innerText = "Score: 0";
-    document.getElementById("result").innerText = "";
-    document.getElementById("playAgainBtn").hidden = true;
-
-
-    document.getElementById("answers").innerHTML = "";
-
-
-    document.getElementById("nextBtn").disabled = true;
-
-    quizScreen.style.display = "block";
-
-    menu.style.display = "none";
-
 
     loadQuestion();
 }
@@ -68,23 +66,18 @@ function loadQuestion() {
     nextBtn.disabled = true;
     document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion +1}`;
 
-    // Show final result screen with option to play again
+    // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
-
-    document.getElementById("result")
-        .innerText = "";
-
-    document.getElementById("answers")
-        .innerHTML = "";
-        document.getElementById("nextBtn").replaceWith(document.getElementById("playAgainBtn"));
-        document.getElementById("playAgainBtn").hidden = false;
-
 
         document.getElementById("question")
             .innerText =
-            `Finished! \nScore: ${quiz.score}/${quiz.questions.length}`;
+            `Finished! Score: ${quiz.score}/${quiz.questions.length}`;
 
- 
+        document.getElementById("answers")
+            .innerHTML = "";
+
+        playAgainBtn.style.display = "inline-block";
+
         return;
     }
 
@@ -111,14 +104,9 @@ function handleAnswer(index) {
 
 
 function goToMenu() {
-    location.reload();
-}
 
-// Unimplemented function to play again (not working)
-function playAgain() {
-
-    startGame("guess_the_country");
-
+    menu.style.display = "block";
+    quizScreen.style.display = "none";
 }
 
 // Proceed to next question when clicked "Next"
@@ -131,11 +119,11 @@ document
 
 document
     .getElementById("menuBtn")
-    .onclick = 
+    .onclick =
         goToMenu;
 
-// Play again button hard resets the game, cound be improved
-document
-    .getElementById("playAgainBtn")
-    .onclick = 
-        goToMenu;
+playAgainBtn.onclick = () => {
+    if (currentMode) {
+        startGame(currentMode);
+    }
+};

@@ -2,7 +2,8 @@
 // onAnswer is a callback function that handles answer
 export function showQuestion(question, onAnswer) {
 
-    // Removes prevoius answer feedback
+    // Removes previous answer feedback
+    const result = document.getElementById("result");
     result.innerText = "";
     // Get HTML elements from the page by their IDs
     const questionElement =
@@ -12,7 +13,15 @@ export function showQuestion(question, onAnswer) {
         document.getElementById("answers");
 
     // Set the question text in the UI
-    questionElement.innerText = question.question;
+    const rawQuestion = question.text || question.question || "";
+    const questionText = typeof rawQuestion === "object"
+        ? rawQuestion.text
+        : rawQuestion;
+    const flag = question.flag || (typeof rawQuestion === "object" ? rawQuestion.flag : undefined);
+
+    questionElement.innerText = flag
+        ? `${questionText} ${flag}`
+        : questionText;
 
     // Clear previous answer buttons
     answersElement.innerHTML = "";
