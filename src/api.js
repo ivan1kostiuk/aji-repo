@@ -11,7 +11,7 @@ async function fetchData() {
     const url = 
         "https://restcountries.com/v3.1/all?fields=name,capital,flag,population"
 
-    try {
+    try{
         const response = await fetch(url)
         if (!response.ok){
             throw new Error(`HTTP error: ${response.status}`);
@@ -40,7 +40,7 @@ const gameModes = {
     },
 
     flag : {
-        validate: country => country.flag,
+        validate: country => country.flag && country.flag.length > 0,
         getQuestion: country => ({
             text: 'Which country does this flag belong to?',
             flag: country.flag
@@ -70,11 +70,6 @@ function generateQuestions(countries, numberOfQuestions, gameMode){
         const country = shuffledCountries[i];
 
         const correctAnswer = mode.getCorrectAnswer(country);
-        
-        // Handle countries with several capitals.
-        //if (gameMode === 'capital') {
-        //    const correctAnswer = country.capital[0];
-        //}
 
         // Generate wrong options by shuffling remaining valid countries
         const wrongOptions = shuffle(

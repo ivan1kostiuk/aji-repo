@@ -16,8 +16,9 @@ import { rl } from "./terminalIO.js";
 
 let quiz;
 
+const GAME_MODES = ["capital", "flag"];
+
 // Starts a new game
-// mode = "easy" or "hard"
 async function startGame(mode) {
     // Fetch questions from API
     const questions =
@@ -57,4 +58,47 @@ function handleAnswer(index) {
     loadQuestion();
 }
 
-startGame();
+// Ask user for gamemode 
+function chooseGameMode() {
+    console.log("Choose game mode: ");
+    GAME_MODES.forEach((mode, index) => {
+        console.log(`${index}. ${mode}`);
+    });
+
+    rl.question("> ", (answer) => {
+        // Parse input
+        const gameMode = parseMode(answer);
+
+        // Validate input
+        if (gameMode){
+            startGame(gameMode);
+        } else {
+            console.log("Invalid input. Please enter a number or a mode name.");
+            chooseGameMode();
+        }
+    });
+}
+
+// Parse user input for gamemode choice
+function parseMode(input) {
+    const trimmed = input.trim().toLowerCase();
+
+    // If input is a number
+    if (!isNaN(trimmed)){
+        const index = Number(trimmed);
+
+        // Validate index
+        if (index >= 0 && index < GAME_MODES.length){
+            return GAME_MODES[index];
+        }
+        return null;
+    }
+
+    if (GAME_MODES.includes(trimmed)){
+        return trimmed;
+    }
+
+    return null;
+}
+
+chooseGameMode();
