@@ -1,9 +1,13 @@
 export async function loadQuestions(gameMode) {
     const data = await fetchData();
 
-    const questions = generateQuestions(data, 10, gameMode);
+    const mode = gameModes[gameMode];
 
-    return questions;
+    if (mode.customGenerateQuestions){
+        return mode.customGenerateQuestions(data, 10);
+    } 
+
+    return generateQuestions(data, 10, mode);
 }
 
 // Fetches data and handles errors
@@ -31,15 +35,17 @@ async function fetchData() {
 }
 
 const gameModes = {
-    capital : {
+    capital: {
         // Filter out countries without capitals
         validate: country => country.capital && country.capital.length > 0,
-        getQuestion: country => ({ text: `What's the capital of ${country.name.common}?` }),
+        getQuestion: country => ({ 
+            text: `What's the capital of ${country.name.common}?` 
+        }),
         getCorrectAnswer: country => country.capital[0],
         getWrongAnswer: country => country.capital?.[0]
     },
 
-    flag : {
+    flag: {
         validate: country => country.flag && country.flag.length > 0,
         getQuestion: country => ({
             text: 'Which country does this flag belong to?',
@@ -47,14 +53,62 @@ const gameModes = {
         }),
         getCorrectAnswer: country => country.name.common,
         getWrongAnswer: country => country.name.common
+    },
+
+    population: {
+        validate: country => country.population,
+        getQuestion: () => ({ 
+            text: `What country has a bigger population?`
+        }),
+        customGenerateQuestions: (countries, requestedQuestionCount) => {
+
+            const validCountries = 
+                countries.filter(gameModes.population.validate);
+
+            const shuffledCountries = shuffle(validCountries);
+
+            const questions = [];
+
+            // Total number of questions cannot exceed number of valid countries
+            const questionCount = 
+                Math.min(requestedQuestionCount, shuffledCountries.length);
+
+            // Generate a question for random countries stored in shuffledCountries
+            for (let i = 0; i < questionCount; i++){
+                const country = shuffledCountries[i];
+
+                const opponent = 
+                    shuffle(
+                        validCountries.filter(c => c !== country)
+                    )[0];
+
+                const correctAnswer = 
+                    country.population > opponent.population
+                        ? country.name.common
+                        : opponent.name.common;
+
+                // Randomize options
+                const options = shuffle([
+                    country.name.common,
+                    opponent.name.common
+                ]);
+
+                // Fill in questions
+                questions.push({
+                    question: gameModes.population.getQuestion(country),
+                    options: options,
+                    answer: options.indexOf(correctAnswer)
+                });
+            }
+
+            return questions;
+        }
     }
 }
 
 // Converts data into questions
 // Currently only contains questions about countries' capitals
-function generateQuestions(countries, numberOfQuestions, gameMode){
-    
-    const mode = gameModes[gameMode];
+function generateQuestions(countries, requestedQuestionCount, mode){
     
     //Filter out invalid countries depending on game mode
     const validCountries = countries.filter(mode.validate);
@@ -63,7 +117,7 @@ function generateQuestions(countries, numberOfQuestions, gameMode){
     const questions = [];
 
     // Total number of questions cannot exceed number of valid countries
-    const questionCount = Math.min(numberOfQuestions, shuffledCountries.length);
+    const questionCount = Math.min(requestedQuestionCount, shuffledCountries.length);
 
     // Generate a question for random countries stored in shuffledCountries
     for (let i = 0; i < questionCount; i++){
@@ -74,7 +128,7 @@ function generateQuestions(countries, numberOfQuestions, gameMode){
         // Generate wrong options by shuffling remaining valid countries
         const wrongOptions = shuffle(
             validCountries
-                .filter(currentCountry => currentCountry !== country)
+                .filter(c => c !== country)
                 .map(mode.getWrongAnswer)
                 .filter(Boolean)
         ).slice(0, 3); // Take first 3 wrong options
@@ -83,7 +137,7 @@ function generateQuestions(countries, numberOfQuestions, gameMode){
         const options = shuffle([
             correctAnswer,
             ...wrongOptions
-        ])
+        ]);
 
         // Fill in questions
         questions.push({

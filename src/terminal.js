@@ -16,7 +16,7 @@ import { rl } from "./terminalIO.js";
 
 let quiz;
 
-const GAME_MODES = ["capital", "flag"];
+const GAME_MODES = ["capital", "flag", "population"];
 
 // Starts a new game
 async function startGame(mode) {
