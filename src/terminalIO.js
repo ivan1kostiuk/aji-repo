@@ -1,4 +1,5 @@
 import readline from "readline";
+import chalk from "chalk";
 
 export const rl = readline.createInterface({
     input: process.stdin,
@@ -7,7 +8,11 @@ export const rl = readline.createInterface({
 
 // Displays a question and answer options
 export function showQuestion(question, onAnswer) {
-    console.log(question.question);
+    console.log(chalk.bold.blue((question.question.text)));
+
+    if (question.question.flag) {
+        console.log(question.question.flag);
+    }
     
     question.options.forEach((option, index) => {
         console.log(`${index}. ${option}`);
@@ -29,5 +34,5 @@ export function showQuestion(question, onAnswer) {
 
 // Displays whether the last answer was correct or not
 export function showResult(correct) {
-    correct ? console.log("✅ Correct!") : console.log("❌ Wrong!");
+    correct ? console.log(chalk.green("✅ Correct!")) : console.log(chalk.redBright("❌ Wrong!"));
 }

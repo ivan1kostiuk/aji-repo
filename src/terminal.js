@@ -1,6 +1,8 @@
 // Import quiz logic (state + rules)
 import { Quiz } from "./quiz.js";
 
+import chalk from "chalk";
+
 // Import UI functions
 import {
     showQuestion,
@@ -33,7 +35,7 @@ async function startGame(mode) {
 function loadQuestion() {
     // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
-        console.log("Finished! Score: %d/%d", quiz.score, quiz.questions.length);
+        console.log(chalk.bold.white(`Finished! Score: ${quiz.score}/${quiz.questions.length}`));
         // No more input
         rl.close()
         return;
@@ -60,7 +62,7 @@ function handleAnswer(index) {
 
 // Ask user for gamemode 
 function chooseGameMode() {
-    console.log("Choose game mode: ");
+    console.log(chalk.bold.magenta("Choose game mode: "));
     GAME_MODES.forEach((mode, index) => {
         console.log(`${index}. ${mode}`);
     });
@@ -73,7 +75,7 @@ function chooseGameMode() {
         if (gameMode){
             startGame(gameMode);
         } else {
-            console.log("Invalid input. Please enter a number or a mode name.");
+            console.log(chalk.red("Invalid input. Please enter a number or a mode name."));
             chooseGameMode();
         }
     });

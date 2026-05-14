@@ -107,7 +107,6 @@ const gameModes = {
 }
 
 // Converts data into questions
-// Currently only contains questions about countries' capitals
 function generateQuestions(countries, requestedQuestionCount, mode){
     
     //Filter out invalid countries depending on game mode
