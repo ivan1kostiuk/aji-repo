@@ -18,14 +18,26 @@ let currentMode = null;
 const menu =
     document.getElementById("menu");
 
-const quizScreen =
+const quizContainer =
     document.getElementById("quiz");
+
+const quizScreen = 
+    document.getElementById("quizScreen");
 
 const nextBtn =
     document.getElementById("nextBtn");
 
 const playAgainBtn =
     document.getElementById("playAgainBtn");
+
+const higherLowerLayout =
+    document.getElementById("higherLowerLayout");
+
+const higherBtn =
+    document.getElementById("higherBtn");
+
+const lowerBtn =
+    document.getElementById("lowerBtn");
 
 // Attach click handlers to difficulty buttons
 document
@@ -38,37 +50,54 @@ document
 
 document
 .getElementById("mode3")
-.onclick = () => startGame("mode3");
+.onclick = () => startGame("population");
+
+document
+.getElementById("mode4")
+.onclick = () => startGame("higherLower");
 
 // Starts a new game
-// mode = "easy" or "hard"
 async function startGame(mode) {
-    currentMode = mode;
-    document.getElementById("score").innerText = "Score: 0";
-
-    // Hide menu, show quiz screen
-    menu.style.display = "none";
-    quizScreen.style.display = "block";
-    playAgainBtn.style.display = "none";
-
     // Fetch questions from API
     const questions =
         await loadQuestions(mode);
 
     quiz = new Quiz(questions);
 
+    currentMode = mode;
+    document.getElementById("score").innerText = "Score: 0";
+    playAgainBtn.style.display = "none";
+    nextBtn.style.display = "";
+
+
+    menu.style.display = "none";
+    quizContainer.style.display = "block";
+
+    if (mode === "higherLower") {
+
+        quizScreen.style.display = "none";
+        higherLowerLayout.style.display = "flex";
+
+    } else {
+
+        quizScreen.style.display = "block";
+        higherLowerLayout.style.display = "none";
+    }
+
     loadQuestion();
 }
 
 // Loads and displays the current question
 function loadQuestion() {
-    // Disable "Next" button until user answers
-    nextBtn.disabled = true;
-    document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion +1}`;
-
-    // If no more questions → show final score
+        // If no more questions → show final score
     if (!quiz.hasMoreQuestions()) {
 
+        quizScreen.style.display = "block";
+        higherLowerLayout.style.display = "none";
+        playAgainBtn.style.display = "";
+        nextBtn.style.display = "none";
+        document.getElementById("currentQuestion").innerHTML = "";
+        document.getElementById("score").innerHTML = "";
         document.getElementById("question")
             .innerText =
             `Finished! Score: ${quiz.score}/${quiz.questions.length}`;
@@ -76,15 +105,36 @@ function loadQuestion() {
         document.getElementById("answers")
             .innerHTML = "";
 
+        document.getElementById("result").innerText = "";
+
+
+
         playAgainBtn.style.display = "inline-block";
 
         return;
     }
+    // Disable "Next" button until user answers
+    nextBtn.disabled = true;
+    document.getElementById("currentQuestion").innerText = `Question ${quiz.currentQuestion +1}`;
+
+
+
+const currentQuestion =
+    quiz.getCurrentQuestion();
+
+if (currentMode === "higherLower") {
+
+    renderHigherLowerQuestion(
+        currentQuestion
+    );
+
+} else {
 
     showQuestion(
-        quiz.getCurrentQuestion(),
+        currentQuestion,
         handleAnswer
     );
+}
 }
 
 // Called when user selects an answer
@@ -95,19 +145,68 @@ function handleAnswer(index) {
 
     showResult(correct);
     
-    document.getElementById("score").innerText = `Score: ${quiz.score}`
-
+    document.getElementById("score").innerText = `Score: ${quiz.score}`;
 
     // Enable "Next" button after answering
     nextBtn.disabled = false;
+
+    if (currentMode === "higherLower") {
+        // color feedback
+        if (index === 0) {
+            higherBtn.style.backgroundColor =
+                correct ? "green" : "red";
+
+        } else {
+            lowerBtn.style.backgroundColor =
+                correct ? "green" : "red";
+
+        }
+        
+        higherBtn.disabled = true;
+        lowerBtn.disabled = true;
+
+
+        setTimeout(() => {
+
+            quiz.nextQuestion();
+            loadQuestion();
+
+        }, 1000); // small delay so user sees result
+    }
 }
 
 
 function goToMenu() {
 
     menu.style.display = "block";
-    quizScreen.style.display = "none";
+    quizContainer.style.display = "none";
 }
+
+
+function renderHigherLowerQuestion(q) {
+    document.getElementById("leftCountryName").innerText =
+        q.currentCountry;
+
+    document.getElementById("leftPopulation").innerText =
+        q.currentPopulation.toLocaleString();
+
+    document.getElementById("rightCountryName").innerText =
+        q.opponentCountry;
+
+
+    // resets colors
+    higherBtn.style.backgroundColor = "";
+    lowerBtn.style.backgroundColor = "";
+
+    // re-enables buttons
+    higherBtn.disabled = false;
+    lowerBtn.disabled = false;
+
+
+    higherBtn.onclick = () => handleAnswer(0);
+    lowerBtn.onclick = () => handleAnswer(1);
+}
+
 
 // Proceed to next question when clicked "Next"
 document
@@ -123,6 +222,7 @@ document
         goToMenu;
 
 playAgainBtn.onclick = () => {
+// text resets
     if (currentMode) {
         startGame(currentMode);
     }

@@ -103,7 +103,70 @@ const gameModes = {
 
             return questions;
         }
+    },
+
+    higherLower: {
+
+    validate: country => country.population,
+
+    customGenerateQuestions: (
+        countries,
+        requestedQuestionCount
+    ) => {
+
+        const validCountries =
+            countries.filter(
+                gameModes.higherLower.validate
+            );
+
+        const questions = [];
+
+        let currentCountry =
+            shuffle(validCountries)[0];
+
+        for (
+            let i = 0;
+            i < requestedQuestionCount;
+            i++
+        ) {
+
+            const opponent =
+                shuffle(
+                    validCountries.filter(
+                        c => c !== currentCountry
+                    )
+                )[0];
+
+            const correctAnswer =
+                opponent.population >
+                currentCountry.population
+                    ? 0
+                    : 1;
+
+            questions.push({
+
+                currentCountry:
+                    currentCountry.name.common,
+
+                currentPopulation:
+                    currentCountry.population,
+
+                opponentCountry:
+                    opponent.name.common,
+
+                opponentPopulation:
+                    opponent.population,
+
+                answer: correctAnswer
+            });
+
+            // IMPORTANT
+            currentCountry = opponent;
+        }
+
+        return questions;
     }
+}
 }
 
 // Converts data into questions
