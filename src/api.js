@@ -1,13 +1,13 @@
-export async function loadQuestions(gameMode) {
+export async function loadQuestions(gameMode, difficulty = "easy") {
     const data = await fetchData();
 
     const mode = gameModes[gameMode];
 
     if (mode.customGenerateQuestions){
-        return mode.customGenerateQuestions(data, 10);
+        return mode.customGenerateQuestions(data, 10, difficulty);
     } 
 
-    return generateQuestions(data, 10, mode);
+    return generateQuestions(data, 10, mode, difficulty);
 }
 
 // Fetches data and handles errors
@@ -34,10 +34,31 @@ async function fetchData() {
     }
 }
 
+const difficultySettings = {
+    easy: country => country.population >= 10_000_000,
+    medium: country => country.population >= 1_000_000 && country.population < 10_000_000,
+    hard: country => country.population >= 100_000 && country.population < 1_000_000
+};
+
+function matchesDifficulty(country, difficulty) {
+    switch(difficulty){
+        case "easy":
+            return country.population >= 10_000_000;
+        case "medium":
+            return country.population >= 1_000_000 && country.population < 10_000_000;
+        case "hard":
+            return country.population >= 100_000 && country.population < 1_000_000;
+        default:
+            return true; // If difficulty is unknown, consider all countries valid
+    }
+}
+
 const gameModes = {
     capital: {
         // Filter out countries without capitals
-        validate: country => country.capital && country.capital.length > 0,
+        validate: (country, difficulty) => 
+            country.capital && country.capital.length > 0 
+            && matchesDifficulty(country, difficulty),
         getQuestion: country => ({ 
             text: `What's the capital of ${country.name.common}?` 
         }),
@@ -46,7 +67,9 @@ const gameModes = {
     },
 
     flag: {
-        validate: country => country.flag && country.flag.length > 0,
+        validate: (country, difficulty) 
+        => country.flag && country.flag.length > 0
+        && matchesDifficulty(country, difficulty),
         getQuestion: country => ({
             text: 'Which country does this flag belong to?',
             flag: country.flag
@@ -170,10 +193,10 @@ const gameModes = {
 }
 
 // Converts data into questions
-function generateQuestions(countries, requestedQuestionCount, mode){
+function generateQuestions(countries, requestedQuestionCount, mode, difficulty) {
     
     //Filter out invalid countries depending on game mode
-    const validCountries = countries.filter(mode.validate);
+    const validCountries = countries.filter(country => mode.validate(country, difficulty));
 
     const shuffledCountries = shuffle(validCountries);
     const questions = [];
