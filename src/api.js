@@ -57,8 +57,9 @@ const gameModes = {
     capital: {
         // Filter out countries without capitals
         validate: (country, difficulty) => 
-            country.capital && country.capital.length > 0 
-            && matchesDifficulty(country, difficulty),
+            country.capital &&
+            country.capital.length > 0 &&
+            matchesDifficulty(country, difficulty),
         getQuestion: country => ({ 
             text: `What's the capital of ${country.name.common}?` 
         }),
@@ -67,9 +68,10 @@ const gameModes = {
     },
 
     flag: {
-        validate: (country, difficulty) 
-        => country.flag && country.flag.length > 0
-        && matchesDifficulty(country, difficulty),
+        validate: (country, difficulty) =>
+        country.flag &&
+        country.flag.length > 0 && 
+        matchesDifficulty(country, difficulty),
         getQuestion: country => ({
             text: 'Which country does this flag belong to?',
             flag: country.flag
@@ -189,8 +191,8 @@ const gameModes = {
 
         return questions;
     }
-}
-}
+    }
+};
 
 // Converts data into questions
 function generateQuestions(countries, requestedQuestionCount, mode, difficulty) {
