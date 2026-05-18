@@ -14,6 +14,13 @@ import {
 
 let quiz;
 let currentMode = null;
+let currentDifficulty = "easy";
+
+// Listens for changes in difficulty dropdown
+document.getElementById("difficulty").addEventListener("change", (e) => {
+    currentDifficulty = e.target.value;
+});
+
 
 const menu =
     document.getElementById("menu");
@@ -49,22 +56,24 @@ document
     .onclick = () => startGame("flag");
 
 document
-.getElementById("mode3")
-.onclick = () => startGame("population");
+    .getElementById("mode3")
+    .onclick = () => startGame("population");
 
 document
-.getElementById("mode4")
-.onclick = () => startGame("higherLower");
+    .getElementById("mode4")
+    .onclick = () => startGame("higherLower");
 
 // Starts a new game
 async function startGame(mode) {
+    
+    currentMode = mode;
+    
     // Fetch questions from API
     const questions =
-        await loadQuestions(mode);
+        await loadQuestions(mode, currentDifficulty);
 
     quiz = new Quiz(questions);
 
-    currentMode = mode;
     document.getElementById("score").innerText = "Score: 0";
     playAgainBtn.style.display = "none";
     nextBtn.style.display = "";
