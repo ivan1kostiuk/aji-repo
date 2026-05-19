@@ -19,9 +19,11 @@ export function showQuestion(question, onAnswer) {
         : rawQuestion;
     const flag = question.flag || (typeof rawQuestion === "object" ? rawQuestion.flag : undefined);
 
-    questionElement.innerText = flag
-        ? `${questionText} ${flag}`
-        : questionText;
+    if (flag) {
+        questionElement.innerHTML = `${questionText}<br><span class="flagEmoji">${flag}</span>`;
+    } else {
+        questionElement.innerText = questionText;
+    }
 
     // Clear previous answer buttons
     answersElement.innerHTML = "";
