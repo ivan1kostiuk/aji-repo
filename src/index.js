@@ -131,6 +131,7 @@ function loadQuestion() {
 const currentQuestion =
     quiz.getCurrentQuestion();
 
+// Depending on game mode, render question differently
 if (currentMode === "higherLower") {
 
     renderHigherLowerQuestion(

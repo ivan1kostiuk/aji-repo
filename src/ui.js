@@ -19,6 +19,7 @@ export function showQuestion(question, onAnswer) {
         : rawQuestion;
     const flag = question.flag || (typeof rawQuestion === "object" ? rawQuestion.flag : undefined);
 
+    // If a flag is provided, include it in the question display
     if (flag) {
         questionElement.innerHTML = `${questionText}<br><span class="flagEmoji">${flag}</span>`;
     } else {

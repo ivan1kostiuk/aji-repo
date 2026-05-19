@@ -34,6 +34,7 @@ async function fetchData() {
     }
 }
 
+// Difficulty settings are based on population size
 const difficultySettings = {
     easy: country => country.population >= 10_000_000,
     medium: country => country.population >= 1_000_000 && country.population < 10_000_000,
@@ -53,6 +54,8 @@ function matchesDifficulty(country, difficulty) {
     }
 }
 
+
+// Defines question generation for each game mode
 const gameModes = {
     capital: {
         // Filter out countries without capitals
